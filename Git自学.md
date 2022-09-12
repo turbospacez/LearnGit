@@ -209,12 +209,195 @@ git commit -m "<>"
 ```
 > 此时 commit 不需要输入文件名
 
+## 分支管理策略
+Git 采用 fast forward 模式 删除分支会丢失分支信息
 
+强制禁止 fast forward 模式, Git 在 merge 就会生成一个新的 commit, 这样从历史就可以看出分支信息
 
+```Git
+git merge --no-ff -m "" <分支名>
+```
+此时创建一个新的commit, 所以需要 commit 信息
 
+合并后 git log 可以查看分支历史
 
+## Bug 分支
+将当前分支的内容保存, 去处理其他分支的内容
 
+```Git
+git stash
+```
+保存当前分支内容, 切换到其他分支处理Bug
 
+**查看 stash 保存的内容**
+```Git
+git stash list
+```
 
+**恢复 stash 内容**
+```Git
+git stash apply // 恢复, 但是不会删除 stash 内容
+git stash drop  // 手动删除 stash 内容
+```
 
+```Git
+git stash pop // 恢复的同时删除 stash 内容
+```
+
+**在多个分支修复相同Bug**
+```Git
+git cherry-pick <分支指针>
+```
+将其他分支修复的bug "复制" 到当前分支
+
+## Feature 分支
+**需要强行删除不需要的分支**
+```Git
+git branch -D <分支名>
+```
+
+> 开发新功能最好新建一个分支
+> 如果要丢弃一个没有被合并过的分支, 通过 -D 强行删除
+
+## 多人协作
+
+**查看远程库**
+```Git
+git remote // 查看远程库信息
+git remote -v // 显示更详细的信息
+```
+
+**推送分支**
+```Git
+git push origin <分支名>
+```
+
+**抓取分支, 只能抓取master主分支**
+```Git
+git clone <链接>
+```
+
+**抓取除了主分支之外的分支**
+```Git
+git checkout -b <分支名> origin/<分支名>
+```
+
+**提交冲突**
+```Git
+git pull // 提交冲突 no tracking information 没有指定本地库还是远程库分支
+git branch --set-upstream-to=origin/<> <> // 指定分支
+git pull // 提交成功, 合并有冲突 手动提交代码
+```
+
+> 1.试着 git push origin <> 推送
+> 2.推送失败 git pull 合并
+> 3.合并冲突 解决冲突 在本地合并
+> 4.没有/解决冲突 git push origin <> 推送
+
+> 提示 no tracking information
+> git branch --set-upstream-to <分支名> origin/<分支名>
+
+## Rebase
+Git 提交历史压缩成一条线 便于查看 美观
+
+```Git
+git rebase // 将分叉的提交历史 改成 一条线
+git log // 查看提交分支
+```
+
+> rebase操作可以把本地未push的分叉提交历史整理成直线
+> rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比
+> 会更改本地分叉提交历史
+
+>只对尚未推送或分享给别人的本地修改执行变基操作清理历史，从不对已推送至别处的提交执行变基操作。 因为rebase会改变提交历史记录，这会影响到别人使用这一远程仓库
+
+# 标签管理
+
+**打标签**
+```Git
+git tag <标签信息> // 先切换到需要标签的分支
+```
+**给历史提交添加标签**
+```Git
+git tag <名称> <commit id>
+```
+
+**查看标签**
+```Git
+git tag // 字母排序
+git show <标签名> // 查看标签信息
+```
+
+**带有说明的标签**
+```Git
+git tag -a <标签名> -m "<说明文字>" <commit id>
+git show <标签名> // 查看说明文字
+```
+
+> 标签 和 commit 挂钩 如果这个 commit 出现在多个分支, 则每个有这个 commit 的分支都可以看到这个标签
+
+# 操作标签
+**删除标签**
+```Git
+git tag -d <标签名>
+```
+
+**推送标签至远程库**
+```Git
+git push origin <标签名> // 推送单个标签
+git push origin --tags // 推送所有未推送的标签
+```
+
+**删除远程库标签**
+```Git
+git tag -d <标签名> // 先删除本地标签
+git push origin :refs/tags/<标签名> // 删除一个远程标签
+```
+
+# 自定义Git
+
+## Git 显示颜色
+```Git
+git config --global color.ui true
+```
+
+## 忽略特殊文件
+忽略文件的原则是：
+1. 忽略操作系统自动生成的文件，比如缩略图等；
+2. 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件；
+3. 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。
+
+Git 工作区根目录 创建 .gitignore 文件
+```gitignore
+# 
+文件名.后缀  // 排除
+!文件名.后缀 // 不排除
+```
+
+> 配置文件可以直接在线浏览：https://github.com/github/gitignore
+
+**强制添加Git**
+```Git
+git add -f <文件名>
+```
+
+**检查ignore规则**
+```Git
+git check-ignore -v <文件名>
+```
+
+> .gitignore 可以放入版本库, 并对 gitignore做版本控制
+
+## 配置别名
+```Git
+git config --global alias.<别名> <原命令>
+```
+
+**配置文件**
+仓库配置文件 .git/config
+Git配置文件 用户主目录 .gitconfig
+
+[alias] 后面是别名
+
+> --global 针对当前用户 不加只针对当前仓库
 
