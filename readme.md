@@ -5,5 +5,5 @@
 # 代码合并
 dev分支
 
-# 代码冲突1
+# 代码冲突
 master分支&featurel分支
