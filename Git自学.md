@@ -12,6 +12,7 @@ sudo apt-get install git # Ubuntu/Debian自动安装Git
 - [Git](https://git-scm.com/downloads)
 - 右键-Git Bash
 
+**配置用户信息**
 ```Git
 git config --global user.name "NAME"
 git config --global user.email "EMAIL@SERVICE.COM"
@@ -26,7 +27,15 @@ git config --global user.email "EMAIL@SERVICE.COM"
 git init // 初始化本地库
 ```
 
-## 编辑工具
+**指令目录作为Git仓库**
+```Git
+git init <文件夹>
+```
+
+## 配置文本编辑工具
+```Git
+git config --system core.editor <editor>
+```
 - VSC
 - VIM
 - 不推荐使用记事本(编码问题)
@@ -53,6 +62,8 @@ git status
 **查看文件内容不同**
 ```Git
 git diff <file>
+git diff HEAD    // 工作区和上一版文件的差异
+git diff -staged // 暂存区和上一版文件的差异
 ```
 
 **查看文件内容**
@@ -63,9 +74,12 @@ cat <file>
 ## 版本回退
 **查看Git日志**
 ```Git
-git log // 完整日志
-git log --pretty=oneline // 输出单行日志
-git reflog // 记录命令
+git log                       // 完整日志
+git log -<数字>               // 限制log显示数量
+git log --pretty=oneline      // 输出单行日志
+git reflog                    // 记录命令
+
+git log --follow <file> // 列出文件的历史提交记录
 ```
 > 回退版本:   git log
 > 回新版本:   git reflog
@@ -76,6 +90,11 @@ git reset --hard HEAD^ // 回退一个版本
 git reset --hard commit_id // 返回到指定版本号 可用于回到当前版本
 ```
 > ^代表回退一个版本, ^^表示回退两个版本; HEAD~100回退100个版本
+
+**撤销提交**
+```Git
+git reset <版本号>
+```
 
 ## 工作区和暂存区
 **工作区**
@@ -112,12 +131,20 @@ git reset HEAD <file>  // 将缓存区的修改撤销
 git checkout -- <file> // 删除工作区的修改记录
 ```
 ## 删除文件
+**文件从版本库中删除**
 ```Git
-rm <file> // 删除文件命令 或直接文件夹删除
+git rm <file> // 删除文件命令 或直接文件夹删除
+git rm --cached <file> // 保留本地文件
+
 git status // 查看当前文件, 可看删了多少文件
 git commit -m "<提交说明>"
 ```
-文件从版本库中删除
+
+**移动或重命名工作区文件**
+```Git
+git mv <源文件> <改名/移动目录>
+```
+> 更名后要提交
 
 **恢复删除文件**
 ```Git
@@ -164,9 +191,20 @@ git remote rm <远程库>
 ```
 > 此处删除只是解除本地库和远程库的链接, 如果真的需要删除则需要登录GitHub手动删除
 
+## 修改仓库名
+```Git
+git remote rename <仓库名>
+```
+
+
 ## 远程库克隆
 ```Git
 git clone <关联地址>
+```
+
+**克隆仓库到指定地址**
+```Git
+git clone <链接> <文件夹>
 ```
 
 # 分支管理
@@ -361,6 +399,10 @@ git push origin :refs/tags/<标签名> // 删除一个远程标签
 git config --global color.ui true
 ```
 
+```GitHub
+git config --global color.ui auto
+```
+
 ## 忽略特殊文件
 忽略文件的原则是：
 1. 忽略操作系统自动生成的文件，比如缩略图等；
@@ -385,8 +427,12 @@ git add -f <文件名>
 ```Git
 git check-ignore -v <文件名>
 ```
-
 > .gitignore 可以放入版本库, 并对 gitignore做版本控制
+
+**显示此项目所有忽略文件**
+```Git
+git ls-files --other --igonred --exclude-standard
+```
 
 ## 配置别名
 ```Git
