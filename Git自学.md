@@ -157,15 +157,25 @@ git checkout -- <file>
 # 远程仓库
 1. 创建SSH密钥
       - 用户目录下 .ssh id_rsa.pub 公开密钥
-      - 自己创建 SSH Key: ssh-keygen -t rsa -C "email@email.com" 
+      - 自己创建 SSH Key: 
+```Git
+ssh-keygen -t rsa -C "email@email.com" 
+```
+> -t 指定密钥, 默认是 rsa, 可以省略.
+> -C 设置注释文字.
+> -f 指定密钥文件存储文件名.
+
 2. 登录GitHub - Account Setting - SSH Keys - Add SSH Key
 
 GitHub 允许多个 Key, 可以使用不同电脑提交代码
 
-**直接打开ssh文件夹**
+**打开ssh文件夹**
 ```Git
-open ~/.ssh
+open <用户名> ~/.ssh
 ```
+
+> id_rsa 为私钥地址
+> id_rsa.pub 为公钥地址, 要把公钥地址的文字全部复制
 
 ## 添加远程库
 1. 登录GitHub - Create a new repository - 复制ssh关联地址
